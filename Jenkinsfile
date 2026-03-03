@@ -1,60 +1,22 @@
 pipeline {
-    agent {
-        docker {
-            image 'php-cli-custom'
-          }
-      }
+    agent any
     environment {
-
+        APP_ENV = "piJenkin"
       }
 
     stages {
-        stage('Checkout') {
+        stage('hello') {
             steps {
-              git 'https://github.com/YasashiiRin/jenkinsPipline.git'
-            }
-        }
-
-        stage ('Install') {
-             steps {
-                sh 'apt-get update'
-                sh 'composer install'
+                echo "welcome to jenkins...."
+                sh 'whoami'
+                sh 'pwd'
               }
           }
-        stage ("Build") {
+
+        stage ("make folder") {
             steps {
-
-
-            }
-          }
-
-        stage ("Static Analysis") {
-
-
-          }
-
-        stage ("Test") {
-            sh 'php artisan test'
-          }
-
-        stage ("Package") {
-
-
-          }
-
-        stage ("Deploy") {
-
-          }
-      }
-
-    post {
-        success {
-            echo "success....................."
-
-          }
-
-        failure {
-            echo "failure............................"
+                sh 'mkdir tmp_foulder'
+              }
           }
       }
   }

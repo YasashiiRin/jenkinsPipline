@@ -41,6 +41,7 @@ pipeline {
                 php artisan event:cache
                 php artisan cache:clear
                 php artisan optimize
+                
                 '''
             }
         }

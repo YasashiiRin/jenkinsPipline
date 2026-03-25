@@ -9,6 +9,8 @@ pipeline {
         stage('Setup') {
             steps {
                 sh '''
+                cp .env.example .env
+                php artisan key:generate
                 php -v
                 composer -v
                 '''

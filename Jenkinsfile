@@ -8,18 +8,26 @@ pipeline {
 
     options {
         timeout(time:30, unit:'MINUTES')
-        buildDiscarder(logRotator(numtoKeepStr:10)) //keep 10 builds
+        buildDiscarder(logRotator(numToKeepStr:'10')) //keep 10 builds
     }
 
     environment {
         APP_ENV = 'testing'
     }   
     stages {
-        stage('Setup') {
+        stage('Install') {
             steps {
                 sh '''
                 php -v
                 composer -v
+                composer install --no-interaction --prefer-dist --optimize-autoloader
+                '''
+            }
+        }
+
+        stage('Setup') {
+            steps {
+                sh '''
                 cp .env.example .env
                 php artisan key:generate
                 php artisan config:cache
@@ -29,14 +37,6 @@ pipeline {
                 php artisan cache:clear
                 php artisan optimize
                 php artisan migrate
-                '''
-            }
-        }
-
-        stage('Install') {
-            steps {
-                sh '''
-                composer install --no-interaction --prefer-dist --optimize-autoloader
                 '''
             }
         }

@@ -25,8 +25,8 @@ class Area extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email' => 'string',
+            'area' => 'string',
         ];
     }
 }

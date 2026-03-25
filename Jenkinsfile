@@ -1,22 +1,50 @@
 pipeline {
-    agent any
-    environment {
-        APP_ENV = "piJenkin"
-      }
+    agent {
+        docker {
+            image 'php-cli-custom'
+        }
+    }
 
     stages {
-        stage('hello') {
-            steps {
-                echo "welcome to jenkins...."
-                sh 'whoami'
-                sh 'pwd'
-              }
-          }
 
-        stage ("make folder") {
+        stage('Checkout') {
             steps {
-                sh 'mkdir tmp_foulder'
-              }
-          }
-      }
-  }
+                git 'https://your-repo-url.git'
+            }
+        }
+
+        stage('Setup') {
+            steps {
+                sh '''
+                php -v
+                composer -v
+                '''
+            }
+        }
+
+        stage('Install') {
+            steps {
+                sh '''
+                apt-get update
+                apt-get install -y git unzip
+                composer install
+                '''
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'php artisan test'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "success....................."
+        }
+        failure {
+            echo "failure............................"
+        }
+    }
+}

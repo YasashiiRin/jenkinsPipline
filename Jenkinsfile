@@ -6,13 +6,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/YasashiiRin/jenkinsPipline.git'
-            }
-        }
-
         stage('Setup') {
             steps {
                 sh '''

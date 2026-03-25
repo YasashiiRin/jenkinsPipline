@@ -33,7 +33,7 @@ pipeline {
 
                 touch database/database.sqlite
                 sed -i "s/DBDB_CONNECTION=mysql/DB_CONNECTION=sqlite/g" .env
-                
+
                 php artisan migrate
                 php artisan config:cache
                 php artisan route:cache
@@ -47,7 +47,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'php artisan test --no-interaction'
+                sh 'php artisan test'
             }
         }
     }

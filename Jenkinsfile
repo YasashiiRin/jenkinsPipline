@@ -30,6 +30,11 @@ pipeline {
                 sh '''
                 cp .env.example .env
                 php artisan key:generate
+
+                touch database/database.sqlite
+
+                sed -i "s/DBDB_CONNECTION=mysql/DB_CONNECTION=sqlite/g" .env
+                
                 php artisan config:cache
                 php artisan route:cache
                 php artisan view:cache

@@ -17,9 +17,20 @@ pipeline {
     stages {
         stage('Install') {
             steps {
+
+                script {
+                    if (!fileExists('.env')) {
+                        sh 'cp .env.example .env'
+                    }
+
+                    if (env.APP_KEY == null || env.APP_KEY == '') {
+                        sh 'php artisan key:generate'
+                    }
+                }
                 sh '''
                 php -v
                 composer -v
+<<<<<<< HEAD
                 composer install --no-interaction --prefer-dist --optimize-autoloader
                 '''
             }

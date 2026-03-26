@@ -30,7 +30,7 @@ pipeline {
                 sh '''
                 php -v
                 composer -v
-<<<<<<< HEAD
+
                 composer install --no-interaction --prefer-dist --optimize-autoloader
                 '''
             }
@@ -46,9 +46,9 @@ pipeline {
                 sed -i "s/DBDB_CONNECTION=mysql/DB_CONNECTION=sqlite/g" .env
 
                 php artisan migrate
+
                 php artisan config:cache
                 php artisan route:cache
-                php artisan view:cache
                 php artisan event:cache
                 php artisan cache:clear
                 php artisan optimize
@@ -57,6 +57,31 @@ pipeline {
             }
         }
 
+        stage ('Check lineing parallel') {
+            parallel {
+                stage ('lint PHP codeSniffer') {
+                    steps {
+                        script {
+                            if (env.BRANCH_NAME == 'main' || !env.BRANCH_NAME) {
+                                sh 'php vendor/bin/phpcs'
+                            } else {
+                                sh 'git fetch origin main'
+                                def changeFile = sh(
+                                    script: "git --no-pager diff origin/main --name-status 'app/*' 'config/*' 'routes/*' ':(exclude)*.blade.php' | grep -E '^(A|M|R|C)' | awk '{if (\$3 != \"\") print \$3; else print \$2}'",
+                                returnStdout: true
+                                ).trim().replace('\n', ' ')
+
+                                if (changeFile) {
+                                    sh "php vendor/bin/phpcs ${changeFile}"
+                                } else {
+                                    echo "No change files to lint"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         stage('Test') {
             steps {
                 sh 'php artisan test'

@@ -17,7 +17,11 @@ pipeline {
     stages {
         stage('Install') {
             steps {
-
+                sh '''
+                php -v
+                composer -v
+                composer install --no-interaction --prefer-dist --optimize-autoloader
+                '''
                 script {
                     if (!fileExists('.env')) {
                         sh 'cp .env.example .env'
@@ -27,12 +31,6 @@ pipeline {
                         sh 'php artisan key:generate'
                     }
                 }
-                sh '''
-                php -v
-                composer -v
-
-                composer install --no-interaction --prefer-dist --optimize-autoloader
-                '''
             }
         }
 
